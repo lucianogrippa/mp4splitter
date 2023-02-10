@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 
 import mp4.util.atom.Atom;
 import mp4.util.atom.AtomException;
@@ -244,6 +245,7 @@ public class Mp4Dump extends DefaultAtomVisitor {
         indent();
         out.println((i + 1) + " "  + atom.getTableSampleSize(i+1));
         totalSize += atom.getTableSampleSize(i+1);
+        out.println(totalSize);
       }
       level = level - 1;
     }
@@ -305,7 +307,7 @@ public class Mp4Dump extends DefaultAtomVisitor {
     }
     try {
       Class<?> cls = Class.forName(Atom.typeToClassName(word));
-      Atom atom = (Atom) cls.newInstance();
+      Atom atom = (Atom) cls.getDeclaredConstructor().newInstance();
       atom.setSize(size);
       atom.accept(this);
     } catch (ClassNotFoundException e) {
@@ -313,6 +315,14 @@ public class Mp4Dump extends DefaultAtomVisitor {
     } catch (InstantiationException e) {
       throw new AtomException("Unable to instantiate atom");
     } catch (IllegalAccessException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (IllegalArgumentException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (InvocationTargetException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (SecurityException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (NoSuchMethodException e) {
       throw new AtomException("Unabel to access atom object");
     }
     return size;

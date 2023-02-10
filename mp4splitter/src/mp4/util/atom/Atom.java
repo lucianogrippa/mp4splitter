@@ -181,7 +181,8 @@ public abstract class Atom {
   public static String typeToClassName(byte[] typ) {
     String str = new String(typ);
     String clsName = str.substring(0, 1).toUpperCase() + str.substring(1);
-    return "mp4.util.atom." + new String(clsName) + "Atom";
+    String typeAtomClass = "mp4.util.atom." + new String(clsName) + "Atom"; 
+    return typeAtomClass;
   }
   
 }

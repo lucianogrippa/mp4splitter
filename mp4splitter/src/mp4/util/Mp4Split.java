@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import mp4.util.atom.Atom;
 import mp4.util.atom.AtomException;
@@ -98,8 +99,12 @@ public class Mp4Split extends DefaultAtomVisitor {
       throw new AtomException("Unable to read enough bytes for atom");  
     }
     try {
-      Class<?> cls = Class.forName(Atom.typeToClassName(word));
-      Atom atom = (Atom) cls.newInstance();
+      String typeAtomClass = Atom.typeToClassName(word);
+      
+      System.out.println(String.format("Atom -> %s",typeAtomClass));
+
+      Class<?> cls = Class.forName(typeAtomClass);
+      Atom atom = (Atom) cls.getDeclaredConstructor().newInstance();
       atom.setSize(size);
       atom.accept(this);
       return atom;
@@ -108,6 +113,14 @@ public class Mp4Split extends DefaultAtomVisitor {
     } catch (InstantiationException e) {
       throw new AtomException("Unable to instantiate atom");
     } catch (IllegalAccessException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (IllegalArgumentException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (InvocationTargetException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (NoSuchMethodException e) {
+      throw new AtomException("Unabel to access atom object");
+    } catch (SecurityException e) {
       throw new AtomException("Unabel to access atom object");
     }
   }
